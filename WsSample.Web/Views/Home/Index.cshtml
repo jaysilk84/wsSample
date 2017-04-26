@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <h2>Jaredizer 2.0</h2>
+    <div><input id="input" style="width: 200px; padding-right: 10px;" /><button id="gogogo">JAREDIZE ME</button></div>
+    <div id="output"></div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        var socket;
+        var uri = "ws://" + window.location.host + "/ws";
+
+        function write(msg) {
+            $('#output').append('<p>' + msg + '</p>');
+        }
+
+        function connect() {
+            socket = new WebSocket(uri);
+            socket.onopen = function(e) { write("Established connection to the Jardizer @@ " + uri); };
+            socket.onclose = function(e) { write("Jaredizer shutting down...."); };
+            socket.onmessage = function(e) { write("Response from the Jaredizer: " + e.data); };
+        }
+
+        function send(msg) {
+            socket.send(msg);
+        }
+
+        function init() {
+            $('#gogogo').click(() => send($('#input').val()));
+            $('#input').keypress((e) => {
+                if (e.which === 13) {
+                    send($('#input').val());
+                    $('#input').val('');
+                }
+            });
+
+            connect();
+        }
+
+        $(() => init()); // 1337 hax0rs do this
+
+    </script>
+}
